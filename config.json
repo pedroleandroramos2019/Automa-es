@@ -1,0 +1,30 @@
+{
+  "selo": null,
+  "cards": {
+    "1": {
+      "arquivo": "card-1-tolstoi-repin-1887.jpg",
+      "enquadramento": "50% 30%",
+      "descricao": "Retrato de Liev Tolstói — Iliá Répin, 1887 (Galeria Tretiakov)"
+    },
+    "2": {
+      "arquivo": "card-2-familia-iasnaia-poliana.jpg",
+      "enquadramento": "50% 45%",
+      "descricao": "Tolstói com a família em Iásnaia Poliana — fotografia, c. 1887"
+    },
+    "3": {
+      "arquivo": "card-3-ge-o-que-e-a-verdade-1890.jpg",
+      "enquadramento": "50% 42%",
+      "descricao": "O Que É a Verdade? (Cristo e Pilatos) — Nikolai Gué, 1890"
+    },
+    "4": {
+      "arquivo": "card-4-miassoiedov-ceifeiros-1887.jpg",
+      "enquadramento": "50% 48%",
+      "descricao": "Tempo de Colheita (Os Ceifeiros) — Grigóri Miassoiédov, 1887"
+    },
+    "5": {
+      "usa": "1",
+      "enquadramento": "50% 24%",
+      "descricao": "Miniatura do retrato de capa — Iliá Répin, 1887"
+    }
+  }
+}

@@ -1,0 +1,352 @@
+/* ==========================================================================
+   Café no Copo Americano — Identidade Visual v2
+   Sistema aplicado ao carrossel "A Confissão" (Tolstói)
+   Formato: 5 cards de 1080 × 1350 px
+   ========================================================================== */
+
+@import url('../fonts/fonts.css');
+
+:root {
+  /* Paleta ------------------------------------------------------------- */
+  --bege:   #F5F0E8;   /* fundo dos cards de texto, tipografia sobre imagem */
+  --tinta:  #1A1A1A;   /* texto sobre bege                                  */
+  --vinho:  #5C2028;   /* acento — numeral, legendas de crédito, 1 palavra  */
+  --sepia:  #8C7560;   /* crédito secundário                                */
+  --sombra: 12, 10, 9; /* base do gradiente localizado sobre imagem         */
+
+  /* Grade -------------------------------------------------------------- */
+  /* Serifa de display — subtítulo da capa, citação e texto de fechamento.
+     A identidade pede Cormorant Garamond; 'EB Garamond' é a alternativa já
+     embarcada, com acentos minúsculos mais baixos. Ver README, "Acentos". */
+  --serifa-display: 'Cormorant Garamond', serif;
+
+  --largura: 1080px;
+  --altura:  1350px;
+  --margem:  88px;     /* respiro lateral, igual em todos os cards          */
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #2b2724;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.card {
+  position: relative;
+  width: var(--largura);
+  height: var(--altura);
+  overflow: hidden;
+  background: var(--bege);
+  isolation: isolate;
+}
+
+/* ==========================================================================
+   Imagens — sempre full bleed, opacidade total, nunca em fade
+   ========================================================================== */
+
+.imagem {
+  position: relative;
+  overflow: hidden;
+  background-color: #3a3230;
+}
+
+.imagem__foto {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--enquadramento, 50% 50%);
+}
+
+/* Marcador de imagem ausente — apenas andaime de trabalho, some assim que o
+   arquivo correspondente entra em /imagens. Ver README. */
+.imagem__vazio {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 0 90px;
+  text-align: center;
+  background:
+    repeating-linear-gradient(135deg,
+      rgba(255,255,255,.028) 0 3px, rgba(0,0,0,0) 3px 9px),
+    linear-gradient(160deg, #4a403c 0%, #332c2a 55%, #241f1e 100%);
+  color: rgba(245, 240, 232, .58);
+  font-family: 'DM Sans', sans-serif;
+}
+.imagem__vazio b {
+  font-weight: 500;
+  font-size: 27px;
+  letter-spacing: .01em;
+  color: rgba(245, 240, 232, .82);
+}
+.imagem__vazio code {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 21px;
+  letter-spacing: .04em;
+  padding: 7px 16px;
+  border-radius: 3px;
+  background: rgba(0,0,0,.3);
+  color: rgba(245, 240, 232, .68);
+}
+.imagem__vazio small { font-size: 20px; font-style: italic; line-height: 1.45; }
+
+/* Gradiente escuro localizado — existe só onde há texto sobre a imagem,
+   nunca sobre rostos, nunca como véu sobre a imagem inteira. */
+.veu {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+}
+.veu--capa {
+  height: 62%;
+  background: linear-gradient(to top,
+    rgba(var(--sombra), .93) 0%,
+    rgba(var(--sombra), .86) 14%,
+    rgba(var(--sombra), .60) 33%,
+    rgba(var(--sombra), .26) 52%,
+    rgba(var(--sombra), 0)   100%);
+}
+.veu--legenda {
+  height: 190px;
+  background: linear-gradient(to top,
+    rgba(var(--sombra), .80) 0%,
+    rgba(var(--sombra), .45) 45%,
+    rgba(var(--sombra), 0)   100%);
+}
+
+/* ==========================================================================
+   Selo do perfil e seta de swipe
+   ========================================================================== */
+
+.selo {
+  position: absolute;
+  top: 62px;
+  right: var(--margem);
+  z-index: 4;
+  display: block;
+  width: 58px;
+  height: 58px;
+}
+.selo svg { display: block; width: 100%; height: 100%; }
+.selo img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.selo--claro { color: var(--bege); opacity: .92; }
+.selo--escuro { color: var(--vinho); opacity: .82; }
+
+.swipe {
+  position: absolute;
+  top: 78px;
+  right: calc(var(--margem) + 84px);
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--bege);
+  opacity: .78;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 20px;
+  font-style: italic;
+  letter-spacing: .06em;
+}
+.swipe svg { display: block; width: 40px; height: 15px; }
+
+/* ==========================================================================
+   Tipografia
+   ========================================================================== */
+
+.titulo-capa {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: 112px;
+  line-height: .95;
+  letter-spacing: -.022em;
+  text-transform: uppercase;
+  color: var(--bege);
+}
+
+.subtitulo {
+  font-family: var(--serifa-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 37px;
+  line-height: 1.36;
+  color: var(--bege);
+}
+
+.titulo-secao {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 800;
+  font-size: 64px;
+  line-height: 1;
+  letter-spacing: -.018em;
+  text-transform: uppercase;
+  color: var(--tinta);
+}
+
+.corpo {
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 400;
+  font-size: 36px;
+  line-height: 1.52;
+  color: var(--tinta);
+  text-wrap: pretty;
+}
+.corpo p + p { margin-top: 26px; }
+.corpo i { font-style: italic; }
+
+/* Palavra de destaque — no máximo uma por card */
+.destaque { color: var(--vinho); font-weight: 500; }
+
+.numeral {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 76px;
+  height: 76px;
+  border: 2px solid var(--vinho);
+  border-radius: 50%;
+  font-family: 'DM Sans', sans-serif;
+  font-weight: 500;
+  font-size: 32px;
+  line-height: 1;
+  color: var(--vinho);
+}
+
+/* Citação em destaque — card 3 */
+.citacao {
+  position: relative;
+  padding-left: 76px;
+  font-family: var(--serifa-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 42px;
+  line-height: 1.4;
+  color: var(--tinta);
+  text-wrap: pretty;
+}
+.citacao::before {
+  content: '\201C';
+  position: absolute;
+  left: -8px;
+  top: -34px;
+  font-family: var(--serifa-display);
+  font-style: italic;
+  font-weight: 600;
+  font-size: 156px;
+  line-height: 1;
+  color: var(--vinho);
+}
+
+/* Legenda de crédito da obra — sempre sobre a imagem */
+.credito {
+  position: absolute;
+  left: var(--margem);
+  right: var(--margem);
+  bottom: 44px;
+  z-index: 3;
+  font-family: 'DM Sans', sans-serif;
+  font-style: italic;
+  font-size: 21px;
+  line-height: 1.4;
+  letter-spacing: .012em;
+  color: rgba(245, 240, 232, .62);
+}
+
+/* ==========================================================================
+   Card 1 — capa
+   ========================================================================== */
+
+.capa .imagem { position: absolute; inset: 0; }
+
+.capa__texto {
+  position: absolute;
+  left: var(--margem);
+  right: var(--margem);
+  bottom: 138px;
+  z-index: 3;
+}
+.capa__texto .subtitulo { margin-top: 34px; }
+
+/* ==========================================================================
+   Cards 2–4 — bloco de texto no topo, imagem full bleed embaixo
+   ========================================================================== */
+
+.secao { display: grid; }
+.secao__texto {
+  padding: 96px var(--margem) 56px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.secao__texto .titulo-secao { margin-top: 40px; }
+.secao__texto .corpo { margin-top: 36px; }
+.secao__texto .citacao { margin-top: 52px; }
+
+/* Cards com mais texto (3 e 4): corpo no piso da faixa permitida (34px) e
+   respiro menor, para que o bloco não ultrapasse 55% da altura do card. */
+.secao--denso .secao__texto { padding-top: 88px; padding-bottom: 50px; }
+.secao--denso .corpo { font-size: 34px; }
+.secao--denso .citacao { font-size: 41px; margin-top: 46px; }
+
+/* ==========================================================================
+   Card 5 — fechamento
+   ========================================================================== */
+
+.fecho {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 336px var(--margem) 170px;
+}
+
+.fecho__texto {
+  max-width: 830px;
+  font-family: var(--serifa-display);
+  font-style: italic;
+  font-weight: 400;
+  font-size: 46px;
+  line-height: 1.44;
+  text-align: center;
+  color: var(--tinta);
+  text-wrap: balance;
+}
+
+.fecho__credito {
+  margin-top: 58px;
+  font-family: 'DM Sans', sans-serif;
+  font-style: italic;
+  font-size: 22px;
+  letter-spacing: .012em;
+  color: var(--vinho);
+}
+.fecho__traducao {
+  margin-top: 12px;
+  font-family: 'DM Sans', sans-serif;
+  font-style: italic;
+  font-size: 20px;
+  letter-spacing: .012em;
+  color: var(--sepia);
+}
+
+.fecho__miniatura {
+  margin-top: auto;
+  width: 280px;
+  height: 280px;
+  border-radius: 50%;
+  overflow: hidden;
+  background-color: #3a3230;
+}
+.fecho__miniatura .imagem { width: 100%; height: 100%; }
+.fecho__miniatura .imagem__vazio { padding: 0 26px; gap: 10px; }
+.fecho__miniatura .imagem__vazio b { font-size: 20px; }
+.fecho__miniatura .imagem__vazio code,
+.fecho__miniatura .imagem__vazio small { display: none; }

@@ -1,0 +1,14 @@
+As famílias tipográficas incluídas nesta pasta — Poppins, DM Sans e Cormorant
+Garamond — são distribuídas sob a SIL Open Font License 1.1, que permite uso,
+estudo, modificação e redistribuição, inclusive comercial, desde que as fontes
+não sejam vendidas isoladamente e mantenham esta nota de licença.
+
+Texto integral da licença: https://openfontlicense.org
+
+  Poppins            — Indian Type Foundry, Jonny Pinhorn
+  DM Sans            — Colophon Foundry, Jonny Pinhorn, Font Bureau
+  Cormorant Garamond — Christian Thalmann / Catharsis Fonts
+
+Os arquivos .woff2 aqui presentes são subconjuntos (latin, latin-ext) obtidos
+da API do Google Fonts e mantidos no repositório para que a renderização dos
+cards seja reproduzível sem acesso à rede.
