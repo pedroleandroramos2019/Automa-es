@@ -120,12 +120,25 @@ def buscar(termo, limite=12):
 
 
 def candidatos(alvo):
-    """Fichas utilizáveis, das de maior para as de menor resolução original."""
-    achados = fichas(alvo['candidatos'])
-    if not any(f['original'][0] >= LARGURA_MIN for f in achados) and alvo.get('busca'):
-        extras = [t for t in buscar(alvo['busca']) if t not in alvo['candidatos']]
-        achados += fichas(extras[:10])
-    return sorted(achados, key=lambda f: f['original'][0], reverse=True)
+    """Fichas utilizáveis, em ordem de preferência.
+
+    Os arquivos conhecidos saem na ordem em que foram declarados, que é uma
+    escolha editorial e não de resolução: a fotografia da tela pendurada no
+    museu costuma ter mais pixels que a reprodução chapada da obra, e é pior
+    para o card — pega moldura, parede e reflexo. Só quando nenhum dos
+    conhecidos serve é que entra a busca, aí sim ordenada por resolução.
+    """
+    conhecidos = fichas(alvo['candidatos'])
+    ordem = {t.replace('_', ' '): i for i, t in enumerate(alvo['candidatos'])}
+    conhecidos.sort(key=lambda f: ordem.get(f['titulo'], len(ordem)))
+
+    if any(f['original'][0] >= LARGURA_MIN for f in conhecidos) or not alvo.get('busca'):
+        return conhecidos
+
+    vistos = set(ordem) | {f['titulo'] for f in conhecidos}
+    extras = [t for t in buscar(alvo['busca']) if t not in vistos]
+    achados = sorted(fichas(extras[:10]), key=lambda f: f['original'][0], reverse=True)
+    return conhecidos + achados
 
 
 def baixar(url, caminho):

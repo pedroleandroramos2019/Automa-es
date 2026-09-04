@@ -10,7 +10,13 @@ npm install
 npm run finalizar  # baixa as imagens e gera out/card-1.png … out/card-5.png
 npm run preview    # abre o carrossel no navegador para conferir antes de exportar
 npm run build      # só re-gera os PNGs, sem baixar nada
+npm run teste      # confere a lógica de escolha de imagem (não usa rede)
 ```
+
+Precisa de Node 18+ e Python 3.8+. No Windows, se `python3` não existir,
+rode `python baixar-imagens.py && npm run build` no lugar de
+`npm run finalizar`. O `npm install` baixa o Chromium do Playwright na
+primeira vez.
 
 ---
 
