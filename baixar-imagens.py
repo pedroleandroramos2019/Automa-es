@@ -1,52 +1,64 @@
 #!/usr/bin/env python3
 """Baixa do Wikimedia Commons as obras de domínio público do carrossel.
 
-    python3 baixar-imagens.py            # baixa o que está confirmado
-    python3 baixar-imagens.py --listar   # mostra os candidatos das categorias
+    python3 baixar-imagens.py            # baixa tudo
+    python3 baixar-imagens.py --listar   # mostra os candidatos sem baixar
 
 Roda na sua máquina — o ambiente onde o projeto foi montado tem a saída de
-rede bloqueada para o Wikimedia. Os arquivos são salvos em imagens/ com os
-nomes que o config.json espera, e o script imprime autor, data e licença de
-cada um para você conferir contra as legendas de crédito dos cards.
+rede bloqueada para o Wikimedia. Para cada card o script tenta os arquivos
+conhecidos em ordem e, se nenhum servir, busca no Commons; descarta o que
+estiver abaixo de 1080 px de largura e fica com a maior resolução. Salva em
+imagens/ com os nomes que o config.json espera e imprime autor, data e
+licença de cada imagem, para conferir contra as legendas dos cards.
 """
 
 import argparse, json, os, re, sys, urllib.error, urllib.parse, urllib.request
 
 API = 'https://commons.wikimedia.org/w/api.php'
-UA = 'CarrosselCafeNoCopoAmericano/1.0 (script de uso próprio; contato via GitHub)'
-DESTINO = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'imagens')
-LARGURA = 2000  # px — folgado para 1080 de exibição, sem baixar arquivos enormes
+UA = 'CarrosselCafeNoCopoAmericano/1.0 (script de uso proprio; contato via GitHub)'
+RAIZ = os.path.dirname(os.path.abspath(__file__))
+DESTINO = os.path.join(RAIZ, 'imagens')
+LARGURA_MIN = 1080   # o card exibe em 1080; abaixo disso a imagem sobe borrada
+LARGURA_ALVO = 2000  # folga para reenquadrar sem baixar arquivos enormes
 
-# Cada alvo: o arquivo que o config.json espera, e onde achá-lo no Commons.
-# 'arquivo_commons' = página de arquivo confirmada.
-# 'categoria'       = não deu para confirmar o arquivo exato daqui; use --listar.
 ALVOS = [
     {
         'destino': 'card-1-tolstoi-repin-1887.jpg',
         'obra': 'Retrato de Liev Tolstói — Iliá Répin, 1887',
-        'arquivo_commons': 'File:Ilya Efimovich Repin (1844-1930) - Portrait of Leo Tolstoy (1887).jpg',
+        'candidatos': [
+            'File:Ilya Efimovich Repin (1844-1930) - Portrait of Leo Tolstoy (1887).jpg',
+        ],
+        'busca': 'Repin portrait Leo Tolstoy 1887',
     },
     {
         'destino': 'card-2-familia-iasnaia-poliana.jpg',
         'obra': 'Tolstói com a família em Iásnaia Poliana',
-        'arquivo_commons': 'File:Tolstoy family circle at Yasnaya Polyana.jpg',
-        'atencao': 'Confira a DATA: a legenda do card diz "c. 1887". Se a foto for '
-                   'de outro período, troque a imagem ou ajuste a legenda no '
-                   'card 2 (src/carrossel.html).',
-        'categoria': 'Category:Photographs of Leo Tolstoy',
+        'candidatos': [
+            'File:Tolstoy family circle at Yasnaya Polyana.jpg',
+            'File:Leo Tolstoy with family in Yasnaya Polyana.jpg',
+        ],
+        'busca': 'Tolstoy family Yasnaya Polyana photograph',
+        'atencao': 'A legenda do card diz "fotografia, c. 1887". Confira a data '
+                   'impressa acima: se não bater, escolha outra imagem com '
+                   '--arquivo ou ajuste a legenda em src/carrossel.html. '
+                   'O prompt original previa como alternativa uma fotografia '
+                   'da propriedade (exterior da casa).',
     },
     {
         'destino': 'card-3-ge-o-que-e-a-verdade-1890.jpg',
         'obra': 'O Que É a Verdade? (Cristo e Pilatos) — Nikolai Gué, 1890',
-        'arquivo_commons': 'File:What is truth.jpg',
+        'candidatos': ['File:What is truth.jpg'],
+        'busca': 'Nikolai Ge What is truth Christ Pilate 1890',
     },
     {
         'destino': 'card-4-miassoiedov-ceifeiros-1887.jpg',
         'obra': 'Tempo de Colheita (Os Ceifeiros) — Grigóri Miassoiédov, 1887',
-        'categoria': 'Category:Harvest time (Croppers) by Grigoriy Myasoyedov',
-        'atencao': 'Não foi possível confirmar o nome exato do arquivo daqui. '
-                   'Rode com --listar, escolha a versão de maior resolução e '
-                   'passe o nome em --arquivo.',
+        'candidatos': [
+            # reprodução chapada da tela, sem moldura nem parede de museu
+            'File:Grigorij Grigorjewitsch Mjassojedow 003.jpg',
+            'File:Harvest time (Croppers) by Grigory Myasoedov in the State Russian Museum IMG 4818.jpg',
+        ],
+        'busca': 'Myasoyedov harvest time croppers 1887',
     },
 ]
 
@@ -68,37 +80,57 @@ def api(**params):
         return json.load(r)
 
 
-def ficha(titulo):
-    """Devolve (url, largura, altura, metadados) de um arquivo do Commons."""
-    dados = api(titles=titulo, prop='imageinfo',
-                iiprop='url|size|extmetadata', iiurlwidth=LARGURA)
-    paginas = dados.get('query', {}).get('pages', {})
-    pagina = next(iter(paginas.values()), {})
-    if 'missing' in pagina or not pagina.get('imageinfo'):
-        return None
-    info = pagina['imageinfo'][0]
-    meta = info.get('extmetadata', {})
-    campo = lambda k: (meta.get(k) or {}).get('value', '—')
-    # thumburl respeita a largura pedida; se o original for menor, vem o original
-    return (info.get('thumburl') or info['url'],
-            info.get('thumbwidth') or info['width'],
-            info.get('thumbheight') or info['height'],
-            {'autor': campo('Artist'), 'data': campo('DateTimeOriginal'),
-             'licenca': campo('LicenseShortName'), 'origem': info['descriptionurl']})
-
-
-def listar(categoria):
-    dados = api(list='categorymembers', cmtitle=categoria, cmtype='file', cmlimit=100)
-    return [m['title'] for m in dados.get('query', {}).get('categorymembers', [])]
-
-
 def limpar(html):
-    return re.sub(r'<[^>]+>', '', html).strip()
+    return re.sub(r'<[^>]+>', '', html or '').strip() or '—'
+
+
+def fichas(titulos):
+    """Metadados dos arquivos pedidos, na ordem em que foram passados."""
+    if not titulos:
+        return []
+    dados = api(titles='|'.join(titulos), prop='imageinfo',
+                iiprop='url|size|extmetadata', iiurlwidth=LARGURA_ALVO)
+    query = dados.get('query', {})
+    # a API normaliza títulos; refaz o mapa para não perder correspondência
+    paginas = {p.get('title'): p for p in query.get('pages', {}).values()}
+    saida = []
+    for p in paginas.values():
+        if 'missing' in p or not p.get('imageinfo'):
+            continue
+        info = p['imageinfo'][0]
+        meta = info.get('extmetadata', {})
+        campo = lambda k: (meta.get(k) or {}).get('value', '')
+        saida.append({
+            'titulo': p['title'],
+            'url': info.get('thumburl') or info['url'],
+            'largura': info.get('thumbwidth') or info['width'],
+            'altura': info.get('thumbheight') or info['height'],
+            'original': (info['width'], info['height']),
+            'autor': limpar(campo('Artist')),
+            'data': limpar(campo('DateTimeOriginal')),
+            'licenca': limpar(campo('LicenseShortName')),
+            'pagina': info['descriptionurl'],
+        })
+    return saida
+
+
+def buscar(termo, limite=12):
+    dados = api(list='search', srsearch=termo, srnamespace=6, srlimit=limite)
+    return [m['title'] for m in dados.get('query', {}).get('search', [])]
+
+
+def candidatos(alvo):
+    """Fichas utilizáveis, das de maior para as de menor resolução original."""
+    achados = fichas(alvo['candidatos'])
+    if not any(f['original'][0] >= LARGURA_MIN for f in achados) and alvo.get('busca'):
+        extras = [t for t in buscar(alvo['busca']) if t not in alvo['candidatos']]
+        achados += fichas(extras[:10])
+    return sorted(achados, key=lambda f: f['original'][0], reverse=True)
 
 
 def baixar(url, caminho):
     req = urllib.request.Request(url, headers={'User-Agent': UA})
-    with urllib.request.urlopen(req, timeout=180) as r, open(caminho, 'wb') as f:
+    with urllib.request.urlopen(req, timeout=300) as r, open(caminho, 'wb') as f:
         f.write(r.read())
     return os.path.getsize(caminho)
 
@@ -107,86 +139,82 @@ def main():
     p = argparse.ArgumentParser(description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument('--listar', action='store_true',
-                   help='lista os arquivos das categorias em vez de baixar')
-    p.add_argument('--card', type=int, choices=[1, 2, 3, 4],
-                   help='age só sobre um card')
-    p.add_argument('--arquivo',
-                   help='nome do arquivo no Commons a usar (requer --card)')
+                   help='mostra os candidatos de cada card, com resolução e data')
+    p.add_argument('--card', type=int, choices=[1, 2, 3, 4], help='age só sobre um card')
+    p.add_argument('--arquivo', help='usa este arquivo do Commons (requer --card)')
     args = p.parse_args()
 
     if args.arquivo and not args.card:
         p.error('--arquivo precisa vir junto de --card')
 
     os.makedirs(DESTINO, exist_ok=True)
-    alvos = [a for i, a in enumerate(ALVOS, 1) if not args.card or i == args.card]
     pendentes = []
 
     for i, alvo in enumerate(ALVOS, 1):
-        if alvo not in alvos:
+        if args.card and i != args.card:
             continue
         print(f'\n── Card {i} · {alvo["obra"]}')
 
-        if args.listar:
-            cat = alvo.get('categoria')
-            if not cat:
-                print(f'   arquivo confirmado: {alvo["arquivo_commons"]}')
-                continue
-            print(f'   {cat}')
-            try:
-                for t in listar(cat):
-                    print(f'     · {t}')
-            except (urllib.error.URLError, OSError) as e:
-                print(f'   ⚠ não deu para falar com o Commons: {rede(e)}')
-            continue
-
-        titulo = (f'File:{args.arquivo}' if args.arquivo and not args.arquivo.startswith('File:')
-                  else args.arquivo) or alvo.get('arquivo_commons')
-        if not titulo:
-            print(f'   ⚠ {alvo["atencao"]}')
-            pendentes.append(i)
-            continue
-
         try:
-            dados = ficha(titulo)
+            if args.arquivo:
+                titulo = args.arquivo if args.arquivo.startswith('File:') else f'File:{args.arquivo}'
+                achados = fichas([titulo])
+            else:
+                achados = candidatos(alvo)
         except (urllib.error.URLError, OSError) as e:
             print(f'   ⚠ não deu para falar com o Commons: {rede(e)}')
             pendentes.append(i)
             continue
 
-        if not dados:
-            print(f'   ⚠ arquivo não encontrado no Commons: {titulo}')
+        servem = [f for f in achados if f['original'][0] >= LARGURA_MIN]
+
+        if args.listar:
+            if not achados:
+                print('   nenhum candidato encontrado')
+            for f in achados:
+                marca = '  ' if f in servem else '✗ '
+                print(f'   {marca}{f["titulo"]}')
+                print(f'       {f["original"][0]}×{f["original"][1]}   {f["data"]}')
+            if achados and not servem:
+                print(f'   ⚠ nenhum chega aos {LARGURA_MIN} px de largura mínimos')
+            continue
+
+        if not servem:
+            menor = achados[0]['original'][0] if achados else 0
+            print(f'   ⚠ nada com pelo menos {LARGURA_MIN} px de largura'
+                  + (f' (maior encontrado: {menor} px)' if menor else ''))
+            print('     Rode com --listar para ver as opções.')
             pendentes.append(i)
             continue
 
-        url, larg, alt, meta = dados
-        if larg < 1080:
-            print(f'   ⚠ só {larg} px de largura — abaixo do mínimo de 1080. Pulando.')
-            pendentes.append(i)
-            continue
-
+        f = servem[0]
         caminho = os.path.join(DESTINO, alvo['destino'])
         try:
-            tam = baixar(url, caminho)
+            tam = baixar(f['url'], caminho)
         except (urllib.error.URLError, OSError) as e:
             print(f'   ⚠ falhou o download: {rede(e)}')
             pendentes.append(i)
             continue
-        print(f'   ✓ imagens/{alvo["destino"]}  {larg}×{alt}  {tam/1024:.0f} KB')
-        print(f'     autor:   {limpar(meta["autor"])}')
-        print(f'     data:    {limpar(meta["data"])}')
-        print(f'     licença: {limpar(meta["licenca"])}')
-        print(f'     origem:  {meta["origem"]}')
+
+        print(f'   ✓ imagens/{alvo["destino"]}  {f["largura"]}×{f["altura"]}  {tam/1024:.0f} KB')
+        print(f'     arquivo: {f["titulo"]}')
+        print(f'     autor:   {f["autor"]}')
+        print(f'     data:    {f["data"]}')
+        print(f'     licença: {f["licenca"]}')
+        print(f'     origem:  {f["pagina"]}')
         if alvo.get('atencao'):
             print(f'     ⚠ {alvo["atencao"]}')
 
     if args.listar:
-        return
+        return 0
 
     if pendentes:
         print(f'\nFaltam os cards {", ".join(map(str, pendentes))}. '
-              f'Rode `python3 baixar-imagens.py --listar` para ver os candidatos.')
-    else:
-        print('\nTudo baixado. Agora rode `npm run build` para gerar os PNGs.')
+              'Rode `python3 baixar-imagens.py --listar` para ver as opções.')
+        return 1
+
+    print('\nTudo baixado. Agora rode `npm run build` para gerar os PNGs.')
+    return 0
 
 
 if __name__ == '__main__':

@@ -34,6 +34,7 @@ window.__pronto = (async () => {
     const arquivo = ficha.arquivo || (config.cards[ficha.usa] || {}).arquivo;
 
     slot.style.setProperty('--enquadramento', ficha.enquadramento || '50% 50%');
+    slot.style.setProperty('--zoom', ficha.zoom || 1);
 
     const img = arquivo ? await carrega(`../imagens/${arquivo}`) : null;
     if (img) {

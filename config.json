@@ -23,8 +23,9 @@
     },
     "5": {
       "usa": "1",
-      "enquadramento": "50% 24%",
-      "descricao": "Miniatura do retrato de capa — Iliá Répin, 1887"
+      "enquadramento": "50% 22%",
+      "descricao": "Miniatura do retrato de capa — Iliá Répin, 1887",
+      "zoom": 2.4
     }
   }
 }

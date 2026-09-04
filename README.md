@@ -7,8 +7,9 @@ rodada e o texto continua editável (nada é achatado em imagem antes da hora).
 
 ```bash
 npm install
-npm run build      # gera out/card-1.png … out/card-5.png
+npm run finalizar  # baixa as imagens e gera out/card-1.png … out/card-5.png
 npm run preview    # abre o carrossel no navegador para conferir antes de exportar
+npm run build      # só re-gera os PNGs, sem baixar nada
 ```
 
 ---
@@ -23,8 +24,8 @@ possível baixar as obras daqui. As obras foram **localizadas e conferidas**;
 falta só o download, que roda na sua máquina:
 
 ```bash
-python3 baixar-imagens.py     # baixa do Commons direto para imagens/
-npm run build                 # gera os PNGs finais
+npm install
+npm run finalizar   # baixa as imagens do Commons e gera os 5 PNGs
 ```
 
 O script resolve cada arquivo pela API do Commons, salva com o nome que o
@@ -38,19 +39,29 @@ conferir esses dados contra as legendas de crédito que já estão nos cards.
 | 1 | *Retrato de Liev Tolstói* — Iliá Répin, 1887 (Galeria Tretiakov) | [`Ilya Efimovich Repin (1844-1930) - Portrait of Leo Tolstoy (1887).jpg`](https://commons.wikimedia.org/wiki/File:Ilya_Efimovich_Repin_(1844-1930)_-_Portrait_of_Leo_Tolstoy_(1887).jpg) |
 | 2 | Tolstói com a família em Iásnaia Poliana | [`Tolstoy family circle at Yasnaya Polyana.jpg`](https://commons.wikimedia.org/wiki/File:Tolstoy_family_circle_at_Yasnaya_Polyana.jpg) — **confira a data** |
 | 3 | *O Que É a Verdade? (Cristo e Pilatos)* — Nikolai Gué, 1890 | [`What is truth.jpg`](https://commons.wikimedia.org/wiki/File:What_is_truth.jpg) |
-| 4 | *Tempo de Colheita (Os Ceifeiros)* — Grigóri Miassoiédov, 1887 | escolher em [`Category:Harvest time (Croppers)`](https://commons.wikimedia.org/wiki/Category:Harvest_time_(Croppers)_by_Grigoriy_Myasoyedov) |
+| 4 | *Tempo de Colheita (Os Ceifeiros)* — Grigóri Miassoiédov, 1887 | [`Grigorij Grigorjewitsch Mjassojedow 003.jpg`](https://commons.wikimedia.org/wiki/Category:Harvest_time_(Croppers)_by_Grigoriy_Myasoyedov) — 2156 × 1250 |
 
-**Duas ressalvas**, e o script avisa das duas na hora de rodar:
+Para cada card o script tenta os arquivos conhecidos, e só se nenhum servir
+é que ele busca no Commons; descarta o que estiver abaixo de 1080 px de
+largura e fica com a maior resolução. Então mesmo que um nome tenha mudado no
+Commons, ele se vira sozinho.
 
-- **Card 2** — o arquivo encontrado aparece catalogado entre fotografias dos
-  anos 1900, mas a legenda do card diz "c. 1887". Confira a data que o script
-  imprime: se não bater, ou troque a imagem (há mais opções em
-  [Photographs of Leo Tolstoy](https://commons.wikimedia.org/wiki/Category:Photographs_of_Leo_Tolstoy))
-  ou ajuste a legenda em `src/carrossel.html`.
-- **Card 4** — não deu para confirmar daqui o nome exato do arquivo dentro da
-  categoria. Rode `python3 baixar-imagens.py --listar`, escolha a versão de
-  maior resolução e passe o nome:
-  `python3 baixar-imagens.py --card 4 --arquivo "Nome Do Arquivo.jpg"`
+**Uma ressalva fica em aberto, e o script avisa dela na hora de rodar:** o
+arquivo do **card 2** aparece catalogado entre fotografias dos anos 1900, mas
+a legenda do card diz "fotografia, c. 1887". Não consegui abrir a página para
+confirmar a data daqui. Confira a data que o script imprime — se não bater,
+há três saídas:
+
+1. escolher outra foto: `python3 baixar-imagens.py --listar` mostra os
+   candidatos com resolução e data, e
+   `python3 baixar-imagens.py --card 2 --arquivo "Nome.jpg"` usa a escolhida
+   (mais opções em [Photographs of Leo Tolstoy](https://commons.wikimedia.org/wiki/Category:Photographs_of_Leo_Tolstoy));
+2. usar a alternativa prevista no roteiro original — uma fotografia da
+   propriedade de Iásnaia Poliana (exterior da casa);
+3. ajustar a legenda em `src/carrossel.html` para a data real da foto.
+
+Publicar com crédito errado é o tipo de detalhe que pega mal num perfil de
+literatura, então vale a conferida.
 
 Se preferir baixar à mão, os nomes que o `config.json` espera em `imagens/`
 são `card-1-tolstoi-repin-1887.jpg`, `card-2-familia-iasnaia-poliana.jpg`,
@@ -77,6 +88,20 @@ o segundo vertical, ambos de `0%` (topo/esquerda) a `100%` (base/direita).
 `50% 30%` centraliza na horizontal e puxa o corte para o alto — bom para
 retratos, porque mantém o rosto acima do gradiente. Depois de colocar as
 imagens reais, vale rodar `npm run preview` e acertar esses números.
+
+O card 5 tem um controle a mais, o `zoom`, porque a miniatura circular é
+pequena (286 px) e encaixar a tela inteira nela deixaria o retrato
+irreconhecível. O `zoom` aproxima em torno do próprio ponto de
+enquadramento — `1` não aproxima, `2.4` (o padrão) mostra pouco mais que o
+rosto:
+
+```json
+"5": { "usa": "1", "enquadramento": "50% 22%", "zoom": 2.4 }
+```
+
+Esse é o número que mais vale conferir no `npm run preview` depois de baixar
+o retrato de Répin: ajuste até o rosto preencher o círculo sem cortar a
+cabeça.
 
 ---
 

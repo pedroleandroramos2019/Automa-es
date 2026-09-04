@@ -60,6 +60,9 @@ body {
   height: 100%;
   object-fit: cover;
   object-position: var(--enquadramento, 50% 50%);
+  /* aproxima em torno do próprio ponto de enquadramento; 1 = sem aproximar */
+  transform: scale(var(--zoom, 1));
+  transform-origin: var(--enquadramento, 50% 50%);
 }
 
 /* Marcador de imagem ausente — apenas andaime de trabalho, some assim que o
@@ -119,8 +122,8 @@ body {
 .veu--legenda {
   height: 190px;
   background: linear-gradient(to top,
-    rgba(var(--sombra), .80) 0%,
-    rgba(var(--sombra), .45) 45%,
+    rgba(var(--sombra), .86) 0%,
+    rgba(var(--sombra), .54) 45%,
     rgba(var(--sombra), 0)   100%);
 }
 
