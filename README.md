@@ -18,24 +18,48 @@ npm run preview    # abre o carrossel no navegador para conferir antes de export
 **Os cards já estão prontos, mas saem com um marcador escuro no lugar das
 fotos.** O ambiente onde este projeto foi montado tem a saída de rede
 restrita a uma lista curta de domínios — Wikimedia Commons, Wikipédia e os
-sites de museu estão bloqueados —, então não foi possível baixar as obras de
-domínio público. Todo o resto está feito: basta colocar os arquivos em
-`imagens/` com os nomes abaixo e rodar `npm run build` de novo.
+sites de museu estão bloqueados por política da organização —, então não foi
+possível baixar as obras daqui. As obras foram **localizadas e conferidas**;
+falta só o download, que roda na sua máquina:
 
-| Arquivo esperado em `imagens/` | Obra | Busca |
+```bash
+python3 baixar-imagens.py     # baixa do Commons direto para imagens/
+npm run build                 # gera os PNGs finais
+```
+
+O script resolve cada arquivo pela API do Commons, salva com o nome que o
+`config.json` espera e imprime **autor, data e licença** de cada imagem — vale
+conferir esses dados contra as legendas de crédito que já estão nos cards.
+
+### As obras
+
+| Card | Obra | Arquivo no Commons |
 |---|---|---|
-| `card-1-tolstoi-repin-1887.jpg` | *Retrato de Liev Tolstói* — Iliá Répin, 1887 (Galeria Tretiakov) | `Ilya Repin Tolstoy portrait 1887 Wikimedia` |
-| `card-2-familia-iasnaia-poliana.jpg` | Tolstói com a família em Iásnaia Poliana — fotografia, c. 1887 | `Tolstoy family Yasnaya Polyana photograph Wikimedia` |
-| `card-3-ge-o-que-e-a-verdade-1890.jpg` | *O Que É a Verdade? (Cristo e Pilatos)* — Nikolai Gué, 1890 | `Nikolai Ge What is Truth painting Wikimedia` |
-| `card-4-miassoiedov-ceifeiros-1887.jpg` | *Tempo de Colheita (Os Ceifeiros)* — Grigóri Miassoiédov, 1887 | `Myasoyedov Mowers 1887 painting Wikimedia` |
+| 1 | *Retrato de Liev Tolstói* — Iliá Répin, 1887 (Galeria Tretiakov) | [`Ilya Efimovich Repin (1844-1930) - Portrait of Leo Tolstoy (1887).jpg`](https://commons.wikimedia.org/wiki/File:Ilya_Efimovich_Repin_(1844-1930)_-_Portrait_of_Leo_Tolstoy_(1887).jpg) |
+| 2 | Tolstói com a família em Iásnaia Poliana | [`Tolstoy family circle at Yasnaya Polyana.jpg`](https://commons.wikimedia.org/wiki/File:Tolstoy_family_circle_at_Yasnaya_Polyana.jpg) — **confira a data** |
+| 3 | *O Que É a Verdade? (Cristo e Pilatos)* — Nikolai Gué, 1890 | [`What is truth.jpg`](https://commons.wikimedia.org/wiki/File:What_is_truth.jpg) |
+| 4 | *Tempo de Colheita (Os Ceifeiros)* — Grigóri Miassoiédov, 1887 | escolher em [`Category:Harvest time (Croppers)`](https://commons.wikimedia.org/wiki/Category:Harvest_time_(Croppers)_by_Grigoriy_Myasoyedov) |
 
-O card 5 reaproveita a imagem do card 1 na miniatura circular — não precisa de
-arquivo próprio.
+**Duas ressalvas**, e o script avisa das duas na hora de rodar:
+
+- **Card 2** — o arquivo encontrado aparece catalogado entre fotografias dos
+  anos 1900, mas a legenda do card diz "c. 1887". Confira a data que o script
+  imprime: se não bater, ou troque a imagem (há mais opções em
+  [Photographs of Leo Tolstoy](https://commons.wikimedia.org/wiki/Category:Photographs_of_Leo_Tolstoy))
+  ou ajuste a legenda em `src/carrossel.html`.
+- **Card 4** — não deu para confirmar daqui o nome exato do arquivo dentro da
+  categoria. Rode `python3 baixar-imagens.py --listar`, escolha a versão de
+  maior resolução e passe o nome:
+  `python3 baixar-imagens.py --card 4 --arquivo "Nome Do Arquivo.jpg"`
+
+Se preferir baixar à mão, os nomes que o `config.json` espera em `imagens/`
+são `card-1-tolstoi-repin-1887.jpg`, `card-2-familia-iasnaia-poliana.jpg`,
+`card-3-ge-o-que-e-a-verdade-1890.jpg` e
+`card-4-miassoiedov-ceifeiros-1887.jpg`. O card 5 reaproveita a imagem do
+card 1 na miniatura circular — não precisa de arquivo próprio.
 
 **Resolução mínima:** 1080 px de largura para os cards 2–4; para o card 1, que
-é full bleed em retrato, o ideal é pelo menos 1080 × 1350. As legendas de
-crédito já estão escritas nos cards, então as imagens precisam ser exatamente
-as obras da tabela.
+é full bleed em retrato, o ideal é pelo menos 1080 × 1350.
 
 ### Ajustar o enquadramento
 
@@ -139,6 +163,7 @@ contra 36 px do card 2) — é o que mantém os três dentro dos 55%.
 ## Estrutura
 
 ```
+baixar-imagens.py     baixa as 4 obras do Wikimedia Commons
 src/carrossel.html    os 5 cards, com o texto de cada um
 src/identidade.css    paleta, tipografia e regras do sistema visual
 src/montar.js         preenche os slots de imagem e o selo a partir do config
