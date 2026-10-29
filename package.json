@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Carrossel de 5 cards para Instagram sobre A Confiss\u00e3o, de Liev Tolst\u00f3i \u2014 Caf\u00e9 no Copo Americano",
+  "description": "Carrossel de 5 cards para Instagram sobre A Confissão, de Liev Tolstói — Café no Copo Americano",
   "scripts": {
     "build": "node build.mjs",
     "preview": "node build.mjs --servir",
     "finalizar": "python3 baixar-imagens.py && node build.mjs",
-    "teste": "python3 teste-baixar-imagens.py"
+    "teste": "python3 teste-baixar-imagens.py",
+    "posts": "node posts/gerar.mjs"
   },
   "devDependencies": {
     "playwright": "^1.56.1"

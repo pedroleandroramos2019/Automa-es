@@ -1,0 +1,131 @@
+/* ==========================================================================
+   Café no Copo Americano — posts únicos (1 slide, 1080 × 1350)
+   Editorial vintage: papel envelhecido, moldura fina, serifada bold na frase,
+   sans-serif fina na atribuição. Um único tom de destaque por post.
+   ========================================================================== */
+
+@import url('./fonts/fonts.css');
+
+:root {
+  --off-black: #1a1714;
+  --creme:     #efe6d4;
+  --papel:     #e9dec7;
+  --tinta:     #1a1714;
+  --margem:    96px;   /* mínimo de 90 px nas laterais */
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: #2b2724;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+.post {
+  position: relative;
+  width: 1080px;
+  height: 1350px;
+  overflow: hidden;
+  isolation: isolate;
+  background: var(--fundo);
+  color: var(--texto);
+  font-family: 'Playfair Display', serif;
+}
+
+.post--escuro { --fundo: var(--off-black); --texto: #ece2cf; --suave: rgba(236, 226, 207, .62); }
+.post--claro  { --fundo: var(--creme);     --texto: var(--tinta); --suave: rgba(26, 23, 20, .62); }
+
+/* Textura de papel: ruído fractal + vinheta leve nas bordas */
+.post::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='600'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .45 0 0 0 0 .36 0 0 0 0 .25 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  opacity: var(--grao, .28);
+  mix-blend-mode: multiply;
+}
+.post--escuro::before { mix-blend-mode: screen; --grao: .10; }
+.post::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 55%, rgba(60, 40, 20, var(--vinheta, .18)) 100%);
+}
+.post--escuro::after { --vinheta: .55; background: radial-gradient(ellipse at 50% 45%, rgba(0,0,0,0) 50%, rgba(0,0,0,.55) 100%); }
+
+/* Moldura de página antiga: fio duplo fino */
+.moldura {
+  position: absolute;
+  inset: 40px;
+  border: 1px solid var(--fio);
+  pointer-events: none;
+  z-index: 3;
+}
+.moldura::after {
+  content: '';
+  position: absolute;
+  inset: 8px;
+  border: 1px solid var(--fio);
+  opacity: .55;
+}
+
+/* Destaque: itálico na cor de acento */
+em, .destaque {
+  font-style: italic;
+  color: var(--acento);
+}
+
+.atribuicao {
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  font-size: 27px;
+  letter-spacing: .02em;
+  line-height: 1.45;
+  color: var(--suave);
+}
+.atribuicao i {
+  font-family: 'Playfair Display', serif;
+  font-weight: 400;
+  font-style: italic;
+  font-size: 1.08em;
+  letter-spacing: 0;
+  color: var(--texto);
+}
+
+.rubrica {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 19px;
+  letter-spacing: .32em;
+  text-transform: uppercase;
+  color: var(--acento);
+}
+
+.marca {
+  position: absolute;
+  right: 72px;
+  bottom: 62px;
+  z-index: 4;
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  font-size: 20px;
+  letter-spacing: .06em;
+  color: var(--texto);
+  opacity: .6;
+}
+
+/* Retrato opcional: aparece se o arquivo existir em ../retratos/,
+   senão o post usa a alternativa tipográfica (classe .sem-retrato). */
+.retrato img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--enquadramento, 50% 30%);
+  filter: grayscale(1) sepia(.45) contrast(1.05);
+}
+.post:not(.sem-retrato) .so-sem-retrato,
+.post.sem-retrato .so-com-retrato { display: none !important; }

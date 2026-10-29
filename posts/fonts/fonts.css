@@ -1,0 +1,44 @@
+/* Playfair Display, Cormorant Garamond, Inter — SIL Open Font License 1.1 (ver OFL.txt) */
+
+@font-face {
+  font-family: 'Playfair Display';
+  font-style: normal;
+  font-weight: 700;
+  font-display: block;
+  src: url('./playfair-display-latin-700-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Playfair Display';
+  font-style: italic;
+  font-weight: 700;
+  font-display: block;
+  src: url('./playfair-display-latin-700-italic.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Playfair Display';
+  font-style: italic;
+  font-weight: 400;
+  font-display: block;
+  src: url('./playfair-display-latin-400-italic.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Cormorant Garamond';
+  font-style: italic;
+  font-weight: 500;
+  font-display: block;
+  src: url('./cormorant-garamond-latin-500-italic.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 300;
+  font-display: block;
+  src: url('./inter-latin-300-normal.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'Inter';
+  font-style: normal;
+  font-weight: 400;
+  font-display: block;
+  src: url('./inter-latin-400-normal.woff2') format('woff2');
+}

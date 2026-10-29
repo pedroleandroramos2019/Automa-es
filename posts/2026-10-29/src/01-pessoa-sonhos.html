@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>01 — Pessoa, Tabacaria</title>
+<link rel="stylesheet" href="../../post.css">
+<style>
+  .post { --acento: #d9a34e; --fio: rgba(217, 163, 78, .38); }
+
+  .conteudo {
+    position: absolute;
+    inset: 0;
+    padding: 150px var(--margem) 170px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .retrato {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 1px solid var(--fio);
+    margin-bottom: 44px;
+  }
+  .ornamento {
+    display: flex;
+    align-items: center;
+    gap: 22px;
+    margin-bottom: 76px;
+    color: var(--acento);
+  }
+  .ornamento span { width: 90px; height: 1px; background: var(--fio); }
+  .ornamento b { width: 9px; height: 9px; transform: rotate(45deg); border: 1px solid var(--acento); }
+
+  .frase {
+    font-weight: 700;
+    font-size: 70px;
+    line-height: 1.16;
+    letter-spacing: -.005em;
+  }
+  .frase .curta { display: block; white-space: nowrap; color: var(--suave); }
+  .frase .virada { display: block; white-space: nowrap; margin-top: 38px; }
+
+  .atribuicao { margin-top: 80px; }
+</style>
+</head>
+<body>
+<main class="post post--escuro">
+  <div class="moldura"></div>
+
+  <div class="conteudo">
+    <div class="retrato so-com-retrato">
+      <img src="../retratos/pessoa.jpg" alt="Fernando Pessoa" style="--enquadramento: 50% 28%">
+    </div>
+    <div class="ornamento so-sem-retrato"><span></span><b></b><span></span></div>
+
+    <p class="frase">
+      <span class="curta">Não sou nada.</span>
+      <span class="curta">Nunca serei nada.</span>
+      <span class="curta">Não posso querer ser nada.</span>
+      <span class="virada">À parte isso, tenho em mim<br><em>todos os sonhos do&nbsp;mundo.</em></span>
+    </p>
+
+    <p class="atribuicao">— Fernando Pessoa (Álvaro de Campos), <i>Tabacaria</i> (1928)</p>
+  </div>
+
+  <div class="marca">@cafenocopo_americano</div>
+</main>
+<script src="../../retrato.js"></script>
+</body>
+</html>

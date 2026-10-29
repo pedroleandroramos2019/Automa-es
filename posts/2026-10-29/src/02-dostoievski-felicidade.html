@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<title>02 — Dostoiévski, Noites Brancas</title>
+<link rel="stylesheet" href="../../post.css">
+<style>
+  .post { --acento: #9c5a1f; --fio: rgba(26, 23, 20, .32); }
+
+  /* Coluna do retrato: 40% da largura, sangrada */
+  .lateral {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 432px;
+    background: #2a221b;
+    overflow: hidden;
+  }
+  .lateral .retrato { position: absolute; inset: 0; }
+
+  /* Alternativa tipográfica: nome na vertical, baixo contraste */
+  .lateral .nome {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .lateral .nome b {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-weight: 700;
+    font-size: 168px;
+    line-height: 1;
+    letter-spacing: .01em;
+    color: rgba(236, 226, 207, .13);
+    white-space: nowrap;
+  }
+  .lateral .datas {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 64px;
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    font-weight: 300;
+    font-size: 19px;
+    letter-spacing: .3em;
+    color: rgba(236, 226, 207, .55);
+  }
+  .lateral .topo {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 64px;
+    text-align: center;
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 30px;
+    color: rgba(217, 163, 78, .8);
+  }
+
+  .moldura { left: 472px; }
+
+  .conteudo {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 432px;
+    right: 0;
+    padding: 150px var(--margem) 170px 78px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .aspas {
+    font-weight: 700;
+    font-size: 150px;
+    line-height: .6;
+    height: 62px;
+    color: var(--acento);
+    opacity: .85;
+  }
+  .frase {
+    font-weight: 700;
+    font-size: 61px;
+    line-height: 1.17;
+    letter-spacing: -.005em;
+  }
+  .atribuicao { margin-top: 56px; }
+</style>
+</head>
+<body>
+<main class="post post--claro">
+  <aside class="lateral">
+    <div class="retrato so-com-retrato">
+      <img src="../retratos/dostoievski.jpg" alt="Fiódor Dostoiévski" style="--enquadramento: 50% 25%">
+    </div>
+    <div class="so-sem-retrato">
+      <div class="topo">Noites Brancas</div>
+      <div class="nome"><b>Dostoiévski</b></div>
+      <div class="datas">1821 — 1881</div>
+    </div>
+  </aside>
+
+  <div class="moldura"></div>
+
+  <div class="conteudo">
+    <div class="aspas">“</div>
+    <p class="frase">Meu Deus, um <em>momento inteiro de felicidade!</em> Será isso pouco, ainda que para toda a vida de um&nbsp;homem?</p>
+    <p class="atribuicao">— Fiódor Dostoiévski,<br><i>Noites Brancas</i> (1848)</p>
+  </div>
+
+  <div class="marca">@cafenocopo_americano</div>
+</main>
+<script src="../../retrato.js"></script>
+</body>
+</html>
